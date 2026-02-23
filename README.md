@@ -61,7 +61,7 @@ If a team member continues writing new steps (e.g., Data Reduction) directly ins
 - The code will **NOT be saved**
 - It will disappear once the Spark session is closed
 
-All required preprocessing steps must exist inside Scala source files `01_DataPreprocessing.scala`. (Read the instructions below)
+All required preprocessing steps must exist inside Scala source files "`01_DataPreprocessing.scala`" for submitting. (Read the instructions below)
 
 ---
 ## 🎯 Correct Project Workflow
