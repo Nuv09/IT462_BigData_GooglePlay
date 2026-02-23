@@ -71,7 +71,7 @@ All required preprocessing steps must exist inside Scala source files "`01_DataP
 
 ### 2️⃣ Write All Official Code in Scala Files 
 - Once you verified your code, Copy the working code and paste it into the Scala file.
-  Note: There is a specific syntax, Let ChatGBT do it for you and tell you how to paste.
+- Note: There is a specific syntax, Let ChatGBT do it for you and tell you how to paste.
 
 ### 3️⃣ Team Collaboration with Git
 After completing a step (e.g., Reduction):
