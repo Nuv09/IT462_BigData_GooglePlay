@@ -11,6 +11,35 @@ The goal is to clean, validate, and prepare the dataset for further analytical t
 - The raw dataset is NOT included in this repository due to GitHub size limitations.
 - Each team member must place the dataset manually in:
   data/raw/Google-Playstore.csv
+---
+## 🚀 Setup Instructions (For Team Members)
+Follow these steps to run the project correctly:
+
+### 1️⃣ Clone the Repository
+First, clone the project from GitHub:
+
+```bash
+git clone https://github.com/Nuv09/IT462_BigData_GooglePlay.git
+cd IT462_BigData_GooglePlay
+```
+---
+### 2️⃣ Place the Dataset in the Correct Path
+Download the Google Play Store dataset manually and place it in:
+```bash
+data/raw/Google-Playstore.csv
+```
+⚠ The dataset is not included in the repository due to GitHub size limitations.
+---
+
+### 3️⃣ Pull the Latest Updates
+Before running the project, always make sure you have the latest version:
+```bash
+git pull
+```
+---
+
+
+
 
   ## ⚙️ How to Run the Project
 
