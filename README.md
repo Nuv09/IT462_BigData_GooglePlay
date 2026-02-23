@@ -61,27 +61,19 @@ If a team member continues writing new steps (e.g., Data Reduction) directly ins
 - The code will **NOT be saved**
 - It will disappear once the Spark session is closed
 
-All required preprocessing steps must exist inside Scala source files. (Read the instructions below)
+All required preprocessing steps must exist inside Scala source files `01_DataPreprocessing.scala`. (Read the instructions below)
 
 ---
 ## 🎯 Correct Project Workflow
 
 ### 1️⃣ Testing Before Saving
-You may:
-
-- Test logic inside `spark-shell`
-- Once verified:
-  - Copy the working code
-  - Paste it into the Scala file
-  - Push the file
+- You may test your code logic inside `spark-shell`.
 
 ### 2️⃣ Write All Official Code in Scala Files 
- 
-Do **not** rely on terminal-only code.
-All preprocessing steps must be written inside `01_DataPreprocessing.scala`,
+- Once you verified your code, Copy the working code and paste it into the Scala file.
+  Note: There is a specific syntax, Let ChatGBT do it for you and tell you how to paste.
 
 ### 3️⃣ Team Collaboration with Git
-
 After completing a step (e.g., Reduction):
 ``` 
 git add .
