@@ -16,8 +16,6 @@ The goal is to clean, validate, and prepare the dataset for further analytical t
 Follow these steps to run the project correctly:
 
 ### 1️⃣ Clone the Repository
-First, clone the project from GitHub:
-
 ```bash
 git clone https://github.com/Nuv09/IT462_BigData_GooglePlay.git
 cd IT462_BigData_GooglePlay
@@ -25,11 +23,10 @@ cd IT462_BigData_GooglePlay
 
 ---
 ### 2️⃣ Place the Dataset in the Correct Path
-Download the Google Play Store dataset manually and place it in:
+⚠ The dataset is not included in the repository due to GitHub size limitations.
 ```bash
 data/raw/Google-Playstore.csv
 ```
-⚠ The dataset is not included in the repository due to GitHub size limitations.
 
 ---
 ### 3️⃣ Pull the Latest Updates
@@ -59,24 +56,17 @@ The output will appear:
 
 
 ---
-## ❗ Important Academic Note
-
+## ❗ Important Notes
 If a team member continues writing new steps (e.g., Data Reduction) directly inside the terminal:
-
 - The code will **NOT be saved**
 - It will disappear once the Spark session is closed
 
-All required preprocessing steps must exist inside Scala source files.
+All required preprocessing steps must exist inside Scala source files. (Read the instructions below)
 
 ---
 ## 🎯 Correct Project Workflow
 
-### 1️⃣ Write All Official Code in Scala Files
-Do **not** rely on terminal-only code.
-All preprocessing steps must be written inside `01_DataPreprocessing.scala`,
-
-### 2️⃣ Testing Before Saving
-
+### 1️⃣ Testing Before Saving
 You may:
 
 - Test logic inside `spark-shell`
@@ -84,6 +74,11 @@ You may:
   - Copy the working code
   - Paste it into the Scala file
   - Push the file
+
+### 2️⃣ Write All Official Code in Scala Files 
+ 
+Do **not** rely on terminal-only code.
+All preprocessing steps must be written inside `01_DataPreprocessing.scala`,
 
 ### 3️⃣ Team Collaboration with Git
 
