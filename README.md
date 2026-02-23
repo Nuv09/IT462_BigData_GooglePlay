@@ -10,6 +10,7 @@ The goal is to clean, validate, and prepare the dataset for further analytical t
 - The raw dataset is NOT included in this repository due to GitHub size limitations.
 - Each team member must place the dataset manually in:
   data/raw/Google-Playstore.csv
+  
 ---
 ## 🚀 Setup Instructions (For Team Members)
 Follow these steps to run the project correctly:
@@ -21,6 +22,7 @@ First, clone the project from GitHub:
 git clone https://github.com/Nuv09/IT462_BigData_GooglePlay.git
 cd IT462_BigData_GooglePlay
 ```
+
 ---
 ### 2️⃣ Place the Dataset in the Correct Path
 Download the Google Play Store dataset manually and place it in:
@@ -28,47 +30,35 @@ Download the Google Play Store dataset manually and place it in:
 data/raw/Google-Playstore.csv
 ```
 ⚠ The dataset is not included in the repository due to GitHub size limitations.
----
 
+---
 ### 3️⃣ Pull the Latest Updates
 Before running the project, always make sure you have the latest version:
 ```bash
 git pull
 ```
+
 ---
-
-
-
-
-  ## ⚙️ How to Run the Project
-
-### 1️⃣ Open Spark Shell
-
+### 4️⃣ Run the Scala Preprocessing Script
+Open Spark Shell:
 ```bash
 spark-shell
-``` 
-2️⃣ Load the preprocessing script
-``` 
+```
+Then load the preprocessing file:
+```bash
 :load code/01_DataPreprocessing.scala
 ```
+
 ---
-## 🔹 Spark Execution & Team Workflow Guidelines
-
-### 🟢 Running the Script in Spark Shell
-
-When executing:
-``` 
-:load code/01_DataPreprocessing.scala
-```
-
+### 5️⃣ Output
 The output will appear:
 
 - In the same **spark-shell session**
 - In the same **terminal window**
 - Any `println`, `.show()`, or `.count()` results will be displayed there
 
----
 
+---
 ## ❗ Important Academic Note
 
 If a team member continues writing new steps (e.g., Data Reduction) directly inside the terminal:
@@ -76,20 +66,14 @@ If a team member continues writing new steps (e.g., Data Reduction) directly ins
 - The code will **NOT be saved**
 - It will disappear once the Spark session is closed
 
-This is academically incorrect.  
 All required preprocessing steps must exist inside Scala source files.
 
 ---
-
 ## 🎯 Correct Project Workflow
 
 ### 1️⃣ Write All Official Code in Scala Files
-
 Do **not** rely on terminal-only code.
-
-All preprocessing steps must be written inside a file such as:
-
----
+All preprocessing steps must be written inside `01_DataPreprocessing.scala`,
 
 ### 2️⃣ Testing Before Saving
 
@@ -100,8 +84,6 @@ You may:
   - Copy the working code
   - Paste it into the Scala file
   - Push the file
-
----
 
 ### 3️⃣ Team Collaboration with Git
 
