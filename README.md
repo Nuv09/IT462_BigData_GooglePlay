@@ -22,9 +22,68 @@ spark-shell
 2️⃣ Load the preprocessing script
 ``` 
 :load code/01_DataPreprocessing.scala
-3️⃣ Output
+```
+---
+## 🔹 Spark Execution & Team Workflow Guidelines
+
+### 🟢 Running the Script in Spark Shell
+
+When executing:
 ``` 
-After execution, the cleaned dataset will be generated inside:
+:load code/01_DataPreprocessing.scala
+```
+
+The output will appear:
+
+- In the same **spark-shell session**
+- In the same **terminal window**
+- Any `println`, `.show()`, or `.count()` results will be displayed there
+
+---
+
+## ❗ Important Academic Note
+
+If a team member continues writing new steps (e.g., Data Reduction) directly inside the terminal:
+
+- The code will **NOT be saved**
+- It will disappear once the Spark session is closed
+
+This is academically incorrect.  
+All required preprocessing steps must exist inside Scala source files.
+
+---
+
+## 🎯 Correct Project Workflow
+
+### 1️⃣ Write All Official Code in Scala Files
+
+Do **not** rely on terminal-only code.
+
+All preprocessing steps must be written inside a file such as:
+
+---
+
+### 2️⃣ Testing Before Saving
+
+You may:
+
+- Test logic inside `spark-shell`
+- Once verified:
+  - Copy the working code
+  - Paste it into the Scala file
+  - Push the file
+
+---
+
+### 3️⃣ Team Collaboration with Git
+
+After completing a step (e.g., Reduction):
 ``` 
-data/cleaned/
+git add .
+git commit -m "Added reduction step"
+git push
+```
+Other team members should then run:
 ``` 
+git pull
+```
