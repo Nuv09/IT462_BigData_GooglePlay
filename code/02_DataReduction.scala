@@ -47,7 +47,8 @@ object DataReduction {
       "Privacy Policy",       // URL/text noise
       "Scraped Time",         // scrape timestamp (not predictive)
       "Currency",             // usually constant; verify in EDA
-      "Size"                  // keep Size_KB instead
+      "Size" ,                // keep Size_KB instead
+      "Free"                  // redundant from price 
       // NOTE: Free vs Price
       // Free is derived from Price in cleaning -> redundant.
       // If your team prefers, you can also drop "Free" and keep Price only.
