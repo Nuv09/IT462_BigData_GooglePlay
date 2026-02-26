@@ -14,7 +14,7 @@ object DataReduction {
     // 1) Load Cleaned Dataset (Parquet)
     // ============================================================
     val inputPath  = "data/cleaned/cleaned_google_play.parquet"
-    val outputPath = "data/cleaned/reduced_google_play.parquet"
+    val outputPath = "data/reduced/reduced_google_play.parquet"
 
     val cleanedDf = spark.read.parquet(inputPath)
 
