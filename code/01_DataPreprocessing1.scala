@@ -152,16 +152,8 @@ object DataPreprocessing {
     // ============================================================
 
     println(s"Final Cleaned Dataset Count: ${cleanedDf.count()}")
-// ============================================================
-// 8. Save Cleaned Dataset
-// ============================================================
+    
 
-cleanedDf
-  .write
-  .mode("overwrite")
-  .parquet("data/cleaned/cleaned_google_play.parquet")
-
-println("Cleaned dataset saved to data/cleaned/")
     spark.stop()
   }
 }
