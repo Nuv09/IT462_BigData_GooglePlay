@@ -32,9 +32,15 @@ object DataPreprocessing {
     // ============================================================
 
     cleanedDf = cleanedDf
-      .withColumn("Installs", regexp_replace(col("Installs"), "[+,]", "").cast(LongType))
-      .withColumn("Minimum Installs", regexp_replace(col("Minimum Installs"), ",", "").cast(LongType))
-      .withColumn("Maximum Installs", regexp_replace(col("Maximum Installs"), ",", "").cast(LongType))
+      def digitsOrNull(c: String) = {
+  val cleaned = regexp_replace(col(c), "[^0-9]", "")
+  when(length(cleaned) === 0, lit(null)).otherwise(cleaned).cast(LongType)
+   }
+
+   cleanedDf = cleanedDf
+     .withColumn("Installs", digitsOrNull("Installs"))
+     .withColumn("Minimum Installs", digitsOrNull("Minimum Installs"))
+      .withColumn("Maximum Installs", digitsOrNull("Maximum Installs"))
       .withColumn("Price", regexp_replace(col("Price"), "[$]", "").cast(DoubleType))
       .withColumn("Rating", col("Rating").cast(DoubleType))
       .withColumn("Rating Count", col("Rating Count").cast(LongType))
