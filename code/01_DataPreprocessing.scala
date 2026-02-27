@@ -27,23 +27,23 @@ object DataPreprocessing {
     println("Initial Schema:")
     cleanedDf.printSchema()
 
-    // ============================================================
-    // 2. Standardization & Type Conversion
-    // ============================================================
+// ============================================================
+// 2. Standardization & Type Conversion
+// ============================================================
 
-    cleanedDf = cleanedDf
-      def digitsOrNull(c: String) = {
+// helper: keep only digits; if empty -> null; then cast to Long
+def digitsOrNull(c: String) = {
   val cleaned = regexp_replace(col(c), "[^0-9]", "")
   when(length(cleaned) === 0, lit(null)).otherwise(cleaned).cast(LongType)
-   }
+}
 
-   cleanedDf = cleanedDf
-     .withColumn("Installs", digitsOrNull("Installs"))
-     .withColumn("Minimum Installs", digitsOrNull("Minimum Installs"))
-      .withColumn("Maximum Installs", digitsOrNull("Maximum Installs"))
-      .withColumn("Price", regexp_replace(col("Price"), "[$]", "").cast(DoubleType))
-      .withColumn("Rating", col("Rating").cast(DoubleType))
-      .withColumn("Rating Count", col("Rating Count").cast(LongType))
+cleanedDf = cleanedDf
+  .withColumn("Installs", digitsOrNull("Installs"))
+  .withColumn("Minimum Installs", digitsOrNull("Minimum Installs"))
+  .withColumn("Maximum Installs", digitsOrNull("Maximum Installs"))
+  .withColumn("Price", regexp_replace(col("Price"), "[$]", "").cast(DoubleType))
+  .withColumn("Rating", col("Rating").cast(DoubleType))
+  .withColumn("Rating Count", col("Rating Count").cast(LongType))
 
     // Derive Free column based on price
     cleanedDf = cleanedDf.withColumn(
