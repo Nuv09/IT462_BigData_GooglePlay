@@ -55,7 +55,7 @@ cleanedDf = cleanedDf
     cleanedDf = cleanedDf
       .withColumn("Released", to_date(trim(col("Released")), "MMM d, yyyy"))
       .withColumn("Last Updated", to_date(trim(col("Last Updated")), "MMM d, yyyy"))
-      .withColumn("Scraped Time", to_timestamp(col("Scraped Time"), "yyyy-MM-dd HH:mm:ss"))
+      .withColumn("Scraped Time", try_to_timestamp(col("Scraped Time"), "yyyy-MM-dd HH:mm:ss"))
 
     // Normalize Boolean fields
     cleanedDf = cleanedDf
