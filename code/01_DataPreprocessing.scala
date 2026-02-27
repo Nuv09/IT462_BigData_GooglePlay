@@ -53,9 +53,9 @@ cleanedDf = cleanedDf
 
     // Convert date columns
     cleanedDf = cleanedDf
-      .withColumn("Released", try_to_date(trim(col("Released")), "MMM d, yyyy"))
-      .withColumn("Last Updated", try_to_date(trim(col("Last Updated")), "MMM d, yyyy"))
-      .withColumn("Scraped Time", try_to_timestamp(col("Scraped Time"), "yyyy-MM-dd HH:mm:ss"))
+      .withColumn("Released", expr("try_to_date(trim(`Released`), 'MMM d, yyyy')"))
+      .withColumn("Last Updated", expr("try_to_date(trim(`Last Updated`), 'MMM d, yyyy')"))
+      .withColumn("Scraped Time", expr("try_to_timestamp(`Scraped Time`, 'yyyy-MM-dd HH:mm:ss')"))
 
     // Normalize Boolean fields
     cleanedDf = cleanedDf
