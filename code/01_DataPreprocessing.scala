@@ -43,7 +43,7 @@ cleanedDf = cleanedDf
   .withColumn("Maximum Installs", digitsOrNull("Maximum Installs"))
   .withColumn("Price", regexp_replace(col("Price"), "[$]", "").cast(DoubleType))
   .withColumn("Rating", col("Rating").cast(DoubleType))
-  .withColumn("Rating Count", col("Rating Count").cast(LongType))
+  .withColumn("Rating Count", digitsOrNull("Rating Count"))
 
     // Derive Free column based on price
     cleanedDf = cleanedDf.withColumn(
