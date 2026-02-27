@@ -27,23 +27,17 @@ object DataPreprocessing {
     println("Initial Schema:")
     cleanedDf.printSchema()
 
-// ============================================================
-// 2. Standardization & Type Conversion
-// ============================================================
+    // ============================================================
+    // 2. Standardization & Type Conversion
+    // ============================================================
 
-// helper: keep only digits; if empty -> null; then cast to Long
-def digitsOrNull(c: String) = {
-  val cleaned = regexp_replace(col(c), "[^0-9]", "")
-  when(length(cleaned) === 0, lit(null)).otherwise(cleaned).cast(LongType)
-}
-
-cleanedDf = cleanedDf
-  .withColumn("Installs", digitsOrNull("Installs"))
-  .withColumn("Minimum Installs", digitsOrNull("Minimum Installs"))
-  .withColumn("Maximum Installs", digitsOrNull("Maximum Installs"))
-  .withColumn("Price", regexp_replace(col("Price"), "[$]", "").cast(DoubleType))
-  .withColumn("Rating", col("Rating").cast(DoubleType))
-  .withColumn("Rating Count", digitsOrNull("Rating Count"))
+    cleanedDf = cleanedDf
+      .withColumn("Installs", regexp_replace(col("Installs"), "[+,]", "").cast(LongType))
+      .withColumn("Minimum Installs", regexp_replace(col("Minimum Installs"), ",", "").cast(LongType))
+      .withColumn("Maximum Installs", regexp_replace(col("Maximum Installs"), ",", "").cast(LongType))
+      .withColumn("Price", regexp_replace(col("Price"), "[$]", "").cast(DoubleType))
+      .withColumn("Rating", col("Rating").cast(DoubleType))
+      .withColumn("Rating Count", col("Rating Count").cast(LongType))
 
     // Derive Free column based on price
     cleanedDf = cleanedDf.withColumn(
@@ -53,9 +47,9 @@ cleanedDf = cleanedDf
 
     // Convert date columns
     cleanedDf = cleanedDf
-      .withColumn("Released", expr("try_to_date(trim(`Released`), 'MMM d, yyyy')"))
-      .withColumn("Last Updated", expr("try_to_date(trim(`Last Updated`), 'MMM d, yyyy')"))
-      .withColumn("Scraped Time", expr("try_to_timestamp(`Scraped Time`, 'yyyy-MM-dd HH:mm:ss')"))
+      .withColumn("Released", to_date(trim(col("Released")), "MMM d, yyyy"))
+      .withColumn("Last Updated", to_date(trim(col("Last Updated")), "MMM d, yyyy"))
+      .withColumn("Scraped Time", to_timestamp(col("Scraped Time"), "yyyy-MM-dd HH:mm:ss"))
 
     // Normalize Boolean fields
     cleanedDf = cleanedDf
