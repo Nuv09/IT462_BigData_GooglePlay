@@ -25,7 +25,8 @@ replay_pid*
 
 data/raw/*.csv
 
+target/
+project/target/
 .metals/
 .scala-build/
 .vscode/
-target/
