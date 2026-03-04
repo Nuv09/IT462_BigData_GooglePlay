@@ -24,3 +24,8 @@ hs_err_pid*
 replay_pid*
 
 data/raw/*.csv
+
+.metals/
+.scala-build/
+.vscode/
+target/
