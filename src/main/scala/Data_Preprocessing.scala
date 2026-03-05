@@ -268,7 +268,6 @@ object GooglePlayFullPipeline {
     val numericCols = Array(
       "Rating",
       "Rating Count",
-      "Maximum Installs",
       "Price",
       "Size_KB",
       "min_android_version",
