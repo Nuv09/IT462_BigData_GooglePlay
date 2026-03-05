@@ -152,6 +152,8 @@ object GooglePlayFullPipeline {
     detectOutliers(workingDf, "Installs")
     detectOutliers(workingDf, "Price")
     detectOutliers(workingDf, "Size_KB")
+    detectOutliers(workingDf, "Minimum Installs")
+    detectOutliers(workingDf, "Maximum Installs")
 
 // 5. Duplicate Check
 
