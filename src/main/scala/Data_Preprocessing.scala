@@ -352,7 +352,45 @@ object GooglePlayFullPipeline {
     println("Data transformation completed successfully.\n")
 
     println("Snapshot (20 rows) AFTER Preprocessing:\n")
-    finalDf.show(10, false)
+    // finalDf.show(10, false)
+
+    finalDf.select(
+  "Category",
+  "Content Rating",
+  "Minimum Android",
+  "Released",
+  "Last Updated",
+  "Ad Supported",
+  "In App Purchases",
+  "Editors Choice"
+).show(10,false)
+
+finalDf.select(
+  "Rating",
+  "Rating Count",
+  "Maximum Installs",
+  "Price",
+  "Size_KB",
+  "min_android_version",
+  "days_since_update",
+  "app_age_days"
+).show(10,false)
+
+finalDf.select(
+  "is_weekend_update",
+  "category_index",
+  "content_rating_index",
+  "category_ohe",
+  "content_rating_ohe",
+  "numeric_features"
+).show(10,false)
+
+finalDf.select(
+  "numeric_features_scaled",
+  "features"
+).show(10,false)
+
+
     println("\n")
 
     println("================= Pipeline Completed Successfully =================\n")
