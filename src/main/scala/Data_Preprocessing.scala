@@ -42,6 +42,8 @@ object GooglePlayFullPipeline {
     println("================= DATA CLEANING =================\n")
     println("Data cleaning in progress...\n")
 
+    println(s"Dataset Row Count BEFORE Cleaning: ${df.count()} \n")
+
 // 1. Standardization & Type Conversion
 
     workingDf = workingDf
@@ -167,7 +169,7 @@ object GooglePlayFullPipeline {
 
 // 6. Final Record Count
 
-    println(s"Final Cleaned Dataset Count: ${workingDf.count()} \n")
+    println(s"Dataset Row Count AFTER Cleaning: ${workingDf.count()} \n")
     println("Data cleaning completed successfully.\n")
 
 // ============================================================
