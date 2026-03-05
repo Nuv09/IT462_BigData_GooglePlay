@@ -152,6 +152,8 @@ object GooglePlayFullPipeline {
     detectOutliers(workingDf, "Installs")
     detectOutliers(workingDf, "Price")
     detectOutliers(workingDf, "Size_KB")
+    detectOutliers(workingDf, "Minimum Installs")
+    detectOutliers(workingDf, "Maximum Installs")
 
 // 5. Duplicate Check
 
@@ -268,7 +270,6 @@ object GooglePlayFullPipeline {
     val numericCols = Array(
       "Rating",
       "Rating Count",
-      "Maximum Installs",
       "Price",
       "Size_KB",
       "min_android_version",
