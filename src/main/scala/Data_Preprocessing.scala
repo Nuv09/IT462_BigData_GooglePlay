@@ -238,11 +238,12 @@ object GooglePlayFullPipeline {
       "min_android_version",
       regexp_extract(col("Minimum Android"), "([0-9]+\\.?[0-9]*)", 1).cast(DoubleType)
     )
+    val refDate = lit("2026-03-05").cast(DateType)
 
     // Time-based engineered features (domain-relevant)
     tdf = tdf
-      .withColumn("days_since_update", datediff(current_date(), col("Last Updated")))
-      .withColumn("app_age_days", datediff(current_date(), col("Released")))
+      .withColumn("days_since_update", datediff(refDate, col("Last Updated")))
+      .withColumn("app_age_days", datediff(refDate, col("Released")))
       .withColumn(
         "is_weekend_update",
         when(dayofweek(col("Last Updated")).isin(1, 7), 1).otherwise(0)
