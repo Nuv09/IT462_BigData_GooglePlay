@@ -21,7 +21,7 @@ All preprocessing logic must be written inside the Scala source files located in
 ```bash
 src/main/scala/
 ```
-### 1️⃣ Clone the Repository
+### 1️⃣ Download SBT
 Using this Link:
 ```bash
 https://www.scala-sbt.org/download/
