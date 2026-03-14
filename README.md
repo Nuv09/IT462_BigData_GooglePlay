@@ -22,7 +22,6 @@ All preprocessing logic must be written inside the Scala source files located in
 ```bash
 src/main/scala/
 ```
----
 ### 1️⃣ Clone the Repository
 Using this Link:
 ```bash
@@ -54,7 +53,7 @@ git pull
 ### 5️⃣ Run the Scala file on Visual Studio 
 Open Visual Studio and write:
 ```bash
-sbt "Data_Preprocessing"
+sbt "Data_Preprocessing" // or any file name you want to run
 ```
 
 ---
