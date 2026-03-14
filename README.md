@@ -1,10 +1,10 @@
 # IT462 – Big Data Project  
 
-### 📌 Project Overview
+### Project Overview
 This project implements a complete data preprocessing pipeline for the Google Play Store dataset using Apache Spark with Scala.  
 The goal is to clean, validate, and prepare the dataset for further large-scale analysis.
 
-## 📊 Dataset
+## Dataset
 - Dataset: Google Play Store
 - Size: ~2.3 million records
 - The raw dataset is NOT included in this repository due to GitHub size limitations.
