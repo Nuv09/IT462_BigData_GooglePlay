@@ -135,6 +135,124 @@ println(
   "number of installs for each group. The results help determine whether pricing influences application " +
   "adoption and whether free applications tend to achieve higher install counts.\n"
 )
+
+    // ============================================================
+    // 7) Query 5: App Age vs Success
+    // Question:
+    // How does application age affect application success in terms of installs?
+    // ============================================================
+    val q5 = spark.sql("""
+      SELECT
+          CASE
+              WHEN app_age_days < 365 THEN 'Less than 1 year'
+              WHEN app_age_days >= 365 AND app_age_days < 1095 THEN '1 to 3 years'
+              WHEN app_age_days >= 1095 AND app_age_days < 1825 THEN '3 to 5 years'
+              ELSE 'More than 5 years'
+          END AS app_age_group,
+          COUNT(*) AS total_apps,
+          ROUND(AVG(`Maximum Installs`), 0) AS avg_installs
+      FROM googleplay
+      WHERE app_age_days IS NOT NULL
+      GROUP BY
+          CASE
+              WHEN app_age_days < 365 THEN 'Less than 1 year'
+              WHEN app_age_days >= 365 AND app_age_days < 1095 THEN '1 to 3 years'
+              WHEN app_age_days >= 1095 AND app_age_days < 1825 THEN '3 to 5 years'
+              ELSE 'More than 5 years'
+          END
+      ORDER BY avg_installs DESC
+    """)
+
+    println("\n========== Query 5: App Age vs Success ==========")
+    q5.show(false)
+
+    println(
+      "\nExplanation: This query analyzes how application age affects success by dividing applications into age groups " +
+      "and calculating the average installs for each group. This provides a clearer view of whether older applications " +
+      "tend to achieve higher install counts than newer ones.\n"
+    )
+
+    // ============================================================
+    // 8) Query 6: Top Content Rating by Success within Each Category
+    // Question:
+    // Within each application category, which content rating achieves
+    // the highest average number of installs?
+    // ============================================================
+    val q6 = spark.sql("""
+      WITH content_rating_stats AS (
+          SELECT
+              Category,
+              `Content Rating`,
+              COUNT(*) AS total_apps,
+              ROUND(AVG(`Maximum Installs`), 0) AS avg_installs
+          FROM googleplay
+          WHERE `Content Rating` IS NOT NULL
+          GROUP BY Category, `Content Rating`
+      ),
+      ranked_content_ratings AS (
+          SELECT
+              Category,
+              `Content Rating`,
+              total_apps,
+              avg_installs,
+              ROW_NUMBER() OVER (
+                  PARTITION BY Category
+                  ORDER BY avg_installs DESC
+              ) AS rank_num
+          FROM content_rating_stats
+      )
+      SELECT
+          Category,
+          `Content Rating`,
+          total_apps,
+          avg_installs
+      FROM ranked_content_ratings
+      WHERE rank_num = 1
+      ORDER BY avg_installs DESC
+      LIMIT 15
+    """)
+
+    println("\n========== Query 6: Top Content Rating by Success within Each Category ==========")
+    q6.show(15, false)
+
+    println(
+      "\nExplanation: This query determines, within each application category, which content rating achieves " +
+      "the highest average number of installs. A window function is used to rank content ratings inside each " +
+      "category and keep only the top-performing one.\n"
+    )
+
+    // ============================================================
+    // 9) Query 7: Statistical Summary
+    // Question:
+    // What are the overall statistical characteristics of application
+    // price and installs in the dataset?
+    // ============================================================
+    val q7 = spark.sql("""
+      SELECT
+          COUNT(*) AS total_apps,
+          COUNT(DISTINCT Category) AS distinct_categories,
+          ROUND(AVG(Price), 2) AS avg_price,
+          ROUND(VARIANCE(Price), 2) AS price_variance,
+          ROUND(AVG(`Maximum Installs`), 2) AS avg_installs,
+          ROUND(VARIANCE(`Maximum Installs`), 2) AS installs_variance,
+          percentile_approx(Price, 0.50) AS median_price,
+          percentile_approx(`Maximum Installs`, 0.25) AS installs_p25,
+          percentile_approx(`Maximum Installs`, 0.50) AS median_installs,
+          percentile_approx(`Maximum Installs`, 0.75) AS installs_p75
+      FROM googleplay
+      WHERE Price IS NOT NULL
+        AND `Maximum Installs` IS NOT NULL
+    """)
+
+    println("\n========== Query 7: Statistical Summary ==========")
+    q7.show(false)
+
+    println(
+      "\nExplanation: This query provides an overall statistical summary of application price and installs. " +
+      "It reports averages, variance, median values, and install percentiles to describe the distribution " +
+      "and spread of application pricing and success in the dataset.\n"
+    )
     spark.stop()
   }
 }
+
