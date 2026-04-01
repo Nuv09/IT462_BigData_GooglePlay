@@ -2,7 +2,7 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types._
 
-import org.apache.spark.ml.feature.{StringIndexer, OneHotEncoder, VectorAssembler, MinMaxScaler}
+import org.apache.spark.ml.feature.{Imputer, MinMaxScaler, OneHotEncoder, StringIndexer, VectorAssembler}
 import org.apache.spark.ml.{Pipeline, PipelineStage}
 
 object GooglePlayFullPipeline {
@@ -147,6 +147,7 @@ object GooglePlayFullPipeline {
       val upper = q3 + 1.5 * iqr
 
       val outliers = df.filter(col(columnName) < lower || col(columnName) > upper).count()
+      println(s"Outliers in $columnName: $outliers")
     }
 
     detectOutliers(workingDf, "Rating")
@@ -156,6 +157,7 @@ object GooglePlayFullPipeline {
     detectOutliers(workingDf, "Size_KB")
     detectOutliers(workingDf, "Minimum Installs")
     detectOutliers(workingDf, "Maximum Installs")
+    println()
 
 // 5. Duplicate Check
 
@@ -249,7 +251,25 @@ object GooglePlayFullPipeline {
       .withColumn(
         "is_weekend_update",
         when(dayofweek(col("Last Updated")).isin(1, 7), 1).otherwise(0)
-      ) // dayofweek: 1=Sunday ... 7=Saturday
+      )
+      .withColumn(
+        "ad_supported_num",
+        when(col("Ad Supported") === true, 1.0)
+          .when(col("Ad Supported") === false, 0.0)
+          .otherwise(null)
+      )
+      .withColumn(
+        "in_app_purchases_num",
+        when(col("In App Purchases") === true, 1.0)
+          .when(col("In App Purchases") === false, 0.0)
+          .otherwise(null)
+      )
+      .withColumn(
+        "editors_choice_num",
+        when(col("Editors Choice") === true, 1.0)
+          .when(col("Editors Choice") === false, 0.0)
+          .otherwise(null)
+      )
 
 // 2. Encode Categorical Variables (Index + One-Hot) using MLlib
 
@@ -291,14 +311,14 @@ object GooglePlayFullPipeline {
       .setInputCol("numeric_features")
       .setOutputCol("numeric_features_scaled")
 
-// 4. Final Feature Vector for ML
+// 4. Final Feature Vector for ML / Analysis Snapshot on Full Data
 
     val finalAssembler = new VectorAssembler()
       .setInputCols(Array("numeric_features_scaled", "category_ohe", "content_rating_ohe"))
       .setOutputCol("features")
       .setHandleInvalid("keep")
 
-    // Build pipeline
+    // Build pipeline on FULL data for analysis output (same spirit as original file)
     val pipeline = new Pipeline().setStages(
       Array[PipelineStage](
         categoryIndexer,
@@ -360,6 +380,170 @@ object GooglePlayFullPipeline {
     println("Snapshot (10 rows) AFTER Preprocessing:\n")
     finalDf.show(10, false)
     println("\n")
+
+// ============================================================
+// 5 SAVE FULL DATASET FOR RDD / SQL
+// ============================================================
+
+    println("================= SAVE FULL DATASET FOR RDD / SQL =================\n")
+
+    finalDf.write
+      .mode("overwrite")
+      .parquet("data/transformed/transformed_google_play.parquet")
+
+    println("Saved: data/transformed/transformed_google_play.parquet\n")
+
+// ============================================================
+// 6 MACHINE LEARNING PREPARATION 
+// ============================================================
+
+    println("================= MACHINE LEARNING PREPARATION =================\n")
+    println("Preparing ML dataset with train/test split...\n")
+
+    val mlBaseDf = tdf.select(
+      col("Maximum Installs").cast(DoubleType).as("label"),
+      col("Category"),
+      col("Content Rating"),
+      col("Rating").cast(DoubleType),
+      col("Rating Count").cast(DoubleType),
+      col("Price").cast(DoubleType),
+      col("Size_KB").cast(DoubleType),
+      col("min_android_version").cast(DoubleType),
+      col("days_since_update").cast(DoubleType),
+      col("app_age_days").cast(DoubleType),
+      col("is_weekend_update").cast(DoubleType),
+      col("ad_supported_num").cast(DoubleType),
+      col("in_app_purchases_num").cast(DoubleType),
+      col("editors_choice_num").cast(DoubleType)
+    )
+
+    val mlFilteredDf = mlBaseDf
+      .filter(col("label").isNotNull)
+      .filter(col("Category").isNotNull)
+      .filter(col("Content Rating").isNotNull)
+
+    val Array(trainDf, testDf) = mlFilteredDf.randomSplit(Array(0.7, 0.3), seed = 42)
+
+    println(s"Train rows: ${trainDf.count()}")
+    println(s"Test rows : ${testDf.count()}\n")
+
+// 7. PREPROCESSING PIPELINE FOR ML (FIT ON TRAIN ONLY)
+
+    val mlNumericCols = Array(
+      "Rating",
+      "Rating Count",
+      "Price",
+      "Size_KB",
+      "min_android_version",
+      "days_since_update",
+      "app_age_days",
+      "is_weekend_update",
+      "ad_supported_num",
+      "in_app_purchases_num",
+      "editors_choice_num"
+    )
+
+    val imputedNumericCols = mlNumericCols.map(c => s"${c}_imp")
+
+    val imputer = new Imputer()
+      .setStrategy("median")
+      .setInputCols(mlNumericCols)
+      .setOutputCols(imputedNumericCols)
+
+    val mlCategoryIndexer = new StringIndexer()
+      .setInputCol("Category")
+      .setOutputCol("category_index")
+      .setHandleInvalid("keep")
+
+    val mlContentIndexer = new StringIndexer()
+      .setInputCol("Content Rating")
+      .setOutputCol("content_rating_index")
+      .setHandleInvalid("keep")
+
+    val mlOneHot = new OneHotEncoder()
+      .setInputCols(Array("category_index", "content_rating_index"))
+      .setOutputCols(Array("category_ohe", "content_rating_ohe"))
+      .setHandleInvalid("keep")
+
+    val mlNumAssembler = new VectorAssembler()
+      .setInputCols(imputedNumericCols)
+      .setOutputCol("numeric_features")
+      .setHandleInvalid("keep")
+
+    val mlScaler = new MinMaxScaler()
+      .setInputCol("numeric_features")
+      .setOutputCol("numeric_features_scaled")
+
+    val mlFinalAssembler = new VectorAssembler()
+      .setInputCols(Array("numeric_features_scaled", "category_ohe", "content_rating_ohe"))
+      .setOutputCol("features")
+      .setHandleInvalid("keep")
+
+    val mlPipeline = new Pipeline().setStages(
+      Array[PipelineStage](
+        imputer,
+        mlCategoryIndexer,
+        mlContentIndexer,
+        mlOneHot,
+        mlNumAssembler,
+        mlScaler,
+        mlFinalAssembler
+      )
+    )
+
+    val mlModel = mlPipeline.fit(trainDf)
+
+    val trainPrepared = mlModel.transform(trainDf).select(
+      col("label"),
+      col("Category"),
+      col("Content Rating"),
+      col("category_index"),
+      col("content_rating_index"),
+      col("category_ohe"),
+      col("content_rating_ohe"),
+      col("numeric_features"),
+      col("numeric_features_scaled"),
+      col("features")
+    )
+
+    val testPrepared = mlModel.transform(testDf).select(
+      col("label"),
+      col("Category"),
+      col("Content Rating"),
+      col("category_index"),
+      col("content_rating_index"),
+      col("category_ohe"),
+      col("content_rating_ohe"),
+      col("numeric_features"),
+      col("numeric_features_scaled"),
+      col("features")
+    )
+
+    println(s"Prepared train rows: ${trainPrepared.count()}")
+    println(s"Prepared test rows : ${testPrepared.count()}\n")
+
+    println("Train snapshot (10 rows):\n")
+    trainPrepared.show(10, false)
+    println("\n")
+
+    println("Test snapshot (10 rows):\n")
+    testPrepared.show(10, false)
+    println("\n")
+
+// 8. SAVE ML-READY TRAIN / TEST DATASETS
+
+    println("================= SAVE ML DATASETS =================\n")
+
+    trainPrepared.write
+      .mode("overwrite")
+      .parquet("data/ml/train_prepared_google_play.parquet")
+
+    testPrepared.write
+      .mode("overwrite")
+      .parquet("data/ml/test_prepared_google_play.parquet")
+
+    println("Saved: data/ml/train_prepared_google_play.parquet")
+    println("Saved: data/ml/test_prepared_google_play.parquet\n")
 
     println("================= Pipeline Completed Successfully =================\n")
 
