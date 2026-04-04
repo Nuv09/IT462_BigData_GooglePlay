@@ -28,7 +28,7 @@ object GooglePlaySQLPhase5 {
     println("===== Model Training Completed Successfully =====")
 
     // 4. Save the trained model for the Evaluation
-    model.write.overwrite().save("results/trained_rf_model")
+    model.write.overwrite().save("Model/trained_rf_model")
     
     println("===== Model saved for evaluation ===== ")
 
