@@ -5,7 +5,7 @@ import org.apache.spark.sql.types._
 import org.apache.spark.ml.feature.{Imputer, MinMaxScaler, OneHotEncoder, StringIndexer, VectorAssembler}
 import org.apache.spark.ml.{Pipeline, PipelineStage}
 
-object GooglePlayFullPipeline {
+object GooglePlaySQLPhase1 {
 
   def main(args: Array[String]): Unit = {
 
