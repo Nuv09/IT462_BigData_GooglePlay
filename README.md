@@ -52,8 +52,9 @@ git pull
 ### 5️⃣ Run the Scala file on Visual Studio 
 Open Visual Studio and write:
 ```bash
-sbt "Data_Preprocessing" // or any file name you want to run
+sbt run
 ```
+then choose file number you want to run
 
 ---
 ### 6️⃣ Output
