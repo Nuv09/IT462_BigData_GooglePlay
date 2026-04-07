@@ -1,34 +1,46 @@
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions._
-import org.apache.spark.ml.regression.RandomForestRegressionModel
+import org.apache.spark.ml.regression.RandomForestRegressor
 import org.apache.spark.ml.evaluation.RegressionEvaluator
 
-object GooglePlaySQLPhase5Evaluation {
+
+object GooglePlaySQLPhase5 {
   def main(args: Array[String]): Unit = {
 
     val spark = SparkSession.builder()
-      .appName("Google Play Store - Model Evaluation")
+      .appName("Google Play Store - Model Training")
       .master("local[*]")
       .getOrCreate()
 
-    import spark.implicits._
-
-    println("===== Starting Model Evaluation =====")
-
-    // 1. Read prepared training and test data
+    // 1. Read the prepared training data
     val trainDf = spark.read.parquet("data/ml/train_prepared_google_play.parquet")
-    val testDf  = spark.read.parquet("data/ml/test_prepared_google_play.parquet")
 
-    // 2. Load trained model
-    val model = RandomForestRegressionModel.load("Model/trained_rf_model")
+    println("===== Starting Model Training =====")
 
-    // 3. Predict on test set
+    // 2. Initialize the Random Forest Regressor 
+    // We use 'label' as the target variable and 'features' as the input vector
+    val rf = new RandomForestRegressor()
+      .setLabelCol("label")
+      .setFeaturesCol("features")
+      .setNumTrees(20) 
+      .setSeed(12345)  // Fixed seed for reproducibility 
+
+    // 3. Train the model 
+    val model = rf.fit(trainDf)
+
+    println("===== Model Training Completed Successfully =====")
+
+    // 4. Save the trained model for the Evaluation
+    model.write.overwrite().save("Model/trained_rf_model")
+    
+    println("===== Model saved for evaluation ===== ")
+  // 5. Predict on test set
     val predictions = model.transform(testDf)
 
     println("===== Sample Predictions =====")
     predictions.select("label", "prediction").show(10, false)
 
-    // 4. Regression metrics
+    // 6. Regression metrics
     val rmseEvaluator = new RegressionEvaluator()
       .setLabelCol("label")
       .setPredictionCol("prediction")
@@ -53,7 +65,7 @@ object GooglePlaySQLPhase5Evaluation {
     println(s"MAE  = $mae")
     println(s"R²   = $r2")
 
-    // 5. Baseline model: predict mean label from training set
+    // 7. Baseline model: predict mean label from training set
     val meanLabel = trainDf.agg(avg("label")).first().getDouble(0)
 
     println(s"===== Baseline Mean Prediction = $meanLabel =====")
@@ -69,7 +81,7 @@ object GooglePlaySQLPhase5Evaluation {
     println(s"Baseline MAE  = $baselineMae")
     println(s"Baseline R²   = $baselineR2")
 
-    // 6. Compare model vs baseline
+    // 8. Compare model vs baseline
     println("===== Comparison =====")
     if (rmse < baselineRmse) {
       println("Model RMSE is better than baseline.")
@@ -89,7 +101,7 @@ object GooglePlaySQLPhase5Evaluation {
       println("Model R² is NOT better than baseline.")
     }
 
-    // 7. Feature importance
+    // 9. Feature importance
     println("===== Feature Importances =====")
     println(model.featureImportances)
 
