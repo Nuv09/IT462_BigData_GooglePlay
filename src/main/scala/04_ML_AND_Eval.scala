@@ -3,38 +3,40 @@ import org.apache.spark.sql.functions._
 import org.apache.spark.ml.regression.RandomForestRegressor
 import org.apache.spark.ml.evaluation.RegressionEvaluator
 
-
 object GooglePlaySQLPhase5 {
   def main(args: Array[String]): Unit = {
 
     val spark = SparkSession.builder()
-      .appName("Google Play Store - Model Training")
+      .appName("Google Play Store - Model Training and Evaluation")
       .master("local[*]")
       .getOrCreate()
 
-    // 1. Read the prepared training data
-    val trainDf = spark.read.parquet("data/ml/train_prepared_google_play.parquet")
+    import spark.implicits._
 
     println("===== Starting Model Training =====")
 
-    // 2. Initialize the Random Forest Regressor 
-    // We use 'label' as the target variable and 'features' as the input vector
+    // 1. Read the prepared training and test data
+    val trainDf = spark.read.parquet("data/ml/train_prepared_google_play.parquet")
+    val testDf  = spark.read.parquet("data/ml/test_prepared_google_play.parquet")
+
+    // 2. Initialize the Random Forest Regressor
     val rf = new RandomForestRegressor()
       .setLabelCol("label")
       .setFeaturesCol("features")
-      .setNumTrees(20) 
-      .setSeed(12345)  // Fixed seed for reproducibility 
+      .setNumTrees(20)
+      .setSeed(12345)
 
-    // 3. Train the model 
+    // 3. Train the model
     val model = rf.fit(trainDf)
 
     println("===== Model Training Completed Successfully =====")
 
-    // 4. Save the trained model for the Evaluation
+    // 4. Save the trained model
     model.write.overwrite().save("Model/trained_rf_model")
-    
-    println("===== Model saved for evaluation ===== ")
-  // 5. Predict on test set
+
+    println("===== Model saved for evaluation =====")
+
+    // 5. Predict on test set
     val predictions = model.transform(testDf)
 
     println("===== Sample Predictions =====")
