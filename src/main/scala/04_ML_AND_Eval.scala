@@ -10,7 +10,7 @@ object GooglePlaySQLPhase5 {
       .appName("Google Play Store - Model Training and Evaluation")
       .master("local[*]")
       .getOrCreate()
-
+spark.sparkContext.setLogLevel("ERROR")
     import spark.implicits._
 
     println("===== Starting Model Training =====")
@@ -106,6 +106,16 @@ object GooglePlaySQLPhase5 {
     // 9. Feature importance
     println("===== Feature Importances =====")
     println(model.featureImportances)
+
+     import org.apache.spark.ml.linalg.Vector
+
+     println("Category OHE size:")
+     println(trainDf.select("category_ohe").head().getAs[Vector]("category_ohe").size)
+
+     println("Content Rating OHE size:")
+     println(trainDf.select("content_rating_ohe").head().getAs[Vector]("content_rating_ohe").size)
+
+    
 
     spark.stop()
   }
