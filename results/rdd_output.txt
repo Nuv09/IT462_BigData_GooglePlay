@@ -1,0 +1,66 @@
+================= PHASE 3: RDD OPERATIONS =================
+
+Preprocessed rows loaded from parquet: 2226837
+
+Schema used for RDD analysis:
+root
+ |-- Category: string (nullable = true)
+ |-- Rating: double (nullable = true)
+ |-- Maximum Installs: long (nullable = true)
+
+
+========== Analysis 1: Top Categories by Total Installs ==========
+
+Number of category groups after aggregation: 48
+
+Top 10 Categories by Total Installs:
+ 1. Tools                               -> 108,096,189,193
+ 2. Communication                       -> 71,740,418,346
+ 3. Productivity                        -> 44,067,991,063
+ 4. Photography                         -> 30,944,592,671
+ 5. Video Players & Editors             -> 30,496,592,872
+ 6. Action                              -> 30,329,703,074
+ 7. Entertainment                       -> 30,112,287,070
+ 8. Casual                              -> 29,869,453,725
+ 9. Arcade                              -> 25,372,000,312
+10. Social                              -> 24,549,658,328
+
+Explanation: This analysis uses RDD aggregation to compute the total number of installs for each application category. It helps identify the categories with the strongest overall popularity.
+
+========== Analysis 2: Rating Buckets vs Average Installs ==========
+
+First bucket result: (0-1,1033162,982.4199409192363)
+
+Collected rating bucket results:
+Bucket: 0-1 | Apps: 1,033,162 | Avg Installs: 982.42
+Bucket: 1-2 | Apps: 12,517 | Avg Installs: 81,745.39
+Bucket: 2-3 | Apps: 69,284 | Avg Installs: 109,827.48
+Bucket: 3-4 | Apps: 316,287 | Avg Installs: 324,117.95
+Bucket: 4-5 | Apps: 795,587 | Avg Installs: 729,878.16
+
+foreach action output:
+(0-1,1033162,982.4199409192363)
+(4-5,795587,729878.15910265)
+(2-3,69284,109827.48474395243)
+(3-4,316287,324117.94784483715)
+(1-2,12517,81745.39474314931)
+
+Explanation: This analysis groups applications into rating ranges, then calculates the number of apps and the average installs for each range. It helps evaluate whether higher-rated apps are generally associated with greater popularity.
+
+========== Requirement Check ==========
+
+RDD Transformations used:
+1. map
+2. reduceByKey
+3. sortBy
+4. filter
+5. groupByKey
+
+RDD Actions used:
+1. count
+2. take
+3. first
+4. collect
+5. foreach
+
+================= PHASE 3 COMPLETED SUCCESSFULLY =================
