@@ -123,6 +123,75 @@ object GooglePlaySQLPhase5 {
     println("===== Feature Importances =====")
     println(model.featureImportances)
 
+    import java.awt.{Color, Font, Graphics2D}
+import java.awt.image.BufferedImage
+import javax.imageio.ImageIO
+import java.io.File
+
+// Top 10 feature importances
+val topFeatures = Seq(
+  ("Category Feature", 0.2156),
+  ("Rating Count", 0.1241),
+  ("Editors Choice", 0.1058),
+  ("Minimum Android Version", 0.1002),
+  ("Rating", 0.0797),
+  ("App Age Days", 0.0623),
+  ("Days Since Update", 0.0619),
+  ("App Size KB", 0.0586),
+  ("Category Feature 2", 0.0576),
+  ("Category Feature 3", 0.0439)
+)
+
+// Create image
+val width = 1000
+val height = 650
+val image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+val g = image.createGraphics()
+
+// Background
+g.setColor(Color.WHITE)
+g.fillRect(0, 0, width, height)
+
+// Title
+g.setColor(Color.BLACK)
+g.setFont(new Font("Arial", Font.BOLD, 24))
+g.drawString("Top 10 Feature Importances", 330, 40)
+
+// Chart settings
+val leftMargin = 260
+val topMargin = 80
+val barHeight = 35
+val gap = 18
+val maxBarWidth = 600
+val maxImportance = topFeatures.map(_._2).max
+
+g.setFont(new Font("Arial", Font.PLAIN, 16))
+
+topFeatures.zipWithIndex.foreach { case ((feature, importance), i) =>
+  val y = topMargin + i * (barHeight + gap)
+  val barWidth = ((importance / maxImportance) * maxBarWidth).toInt
+
+  // Feature name
+  g.setColor(Color.BLACK)
+  g.drawString(feature, 30, y + 24)
+
+  // Bar
+  g.setColor(new Color(79, 129, 189))
+  g.fillRect(leftMargin, y, barWidth, barHeight)
+
+  // Value
+  g.setColor(Color.BLACK)
+  g.drawString(f"$importance%.4f", leftMargin + barWidth + 10, y + 24)
+}
+
+g.dispose()
+
+// Save image
+new File("results").mkdirs()
+ImageIO.write(image, "png", new File("top_feature_importances.png"))
+
+println("Bar chart saved to: top_feature_importances.png")
+
     import org.apache.spark.ml.linalg.Vector
 
     println("Category OHE size:")
