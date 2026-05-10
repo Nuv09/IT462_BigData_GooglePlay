@@ -12,15 +12,17 @@ The goal is to clean, validate, and prepare the dataset for further large-scale 
   data/raw/Google-Playstore.csv
   
 ---
-## Setup Instructions (For Team Members)
+## Setup Instructions
 Follow these steps to run the project correctly:
 
 ## ❗ Important Notes
-All preprocessing logic must be written inside the Scala source files located in:
-- 
+- All preprocessing logic must be written inside the Scala source files located in:
 ```bash
 src/main/scala/
 ```
+- Spark version: 3.5.8
+- Scala version: 2.12.18
+
 ### 1️⃣ Download SBT
 Using this Link:
 ```bash
