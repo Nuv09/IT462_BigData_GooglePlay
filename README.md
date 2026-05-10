@@ -10,6 +10,7 @@ The goal is to clean, validate, and prepare the dataset for further large-scale 
 - The raw dataset is NOT included in this repository due to GitHub size limitations.
 - Each team member must place the dataset manually in:
   data/raw/Google-Playstore.csv
+- Dataset Link: https://www.kaggle.com/datasets/gauthamp10/google-playstore-apps
   
 ---
 ## Setup Instructions
